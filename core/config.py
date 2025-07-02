@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from models.engine import ENGINE, get_db
 from sqlmodel import SQLModel
-# from routers.soda import
+from routers.soda import router as soda_router
 
 
 def configure_cors(application: FastAPI) -> None:
@@ -17,7 +17,7 @@ def configure_cors(application: FastAPI) -> None:
 
 
 def configure_routes(application: FastAPI) -> None:
-    ...
+    application.include_router(soda_router)
 
 def configure_db() -> None:
     SQLModel.metadata.bind = get_db()
