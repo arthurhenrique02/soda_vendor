@@ -1,4 +1,5 @@
-from sqlmodel import SQLModel, Field
+from pydantic import BaseModel
+from sqlmodel import Field, SQLModel
 
 
 class Soda(SQLModel, table=True):
@@ -8,3 +9,8 @@ class Soda(SQLModel, table=True):
 
     def __repr__(self):
         return f"Soda({self.id}, name='{self.name}', qty={self.qty})"
+
+class SodaInstructor(BaseModel):
+    intention: str
+    name: str
+    qty: int
