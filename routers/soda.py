@@ -25,8 +25,8 @@ async def chat(prompt: str, db: Session = Depends(get_db)):
 
     prompt_msg = (
         "Considering a soda vending machine context,"
-        "extract the user intention, "
-        f"soda name (coke, pepsi, etc) and quantity from the following prompt: {prompt}"
+        "extract the user intention (consider retrieve a list of an specific item), "
+        f"soda name (coke, pepsi, fanta, etc) and quantity from the following prompt: {prompt}"
     )
 
     data: SodaInstructor = client.chat.completions.create(

@@ -1,6 +1,7 @@
 from sqlmodel import Session, select
 from models.soda import Soda, SodaInstructor
-from fastapi import HTTPException, Response
+from fastapi import HTTPException
+from fastapi.responses import JSONResponse
 
 
 def create_soda(
@@ -71,9 +72,10 @@ def delete_soda(
     if not soda:
         return None
     
-    db.delete(soda)
+    soda.qty = 0
+    db.add(soda)
     db.commit()
-
+    db.commit()
     return soda
 
 
@@ -87,12 +89,12 @@ def get_soda_by_name(
     :param soda_id: The ID of the soda to retrieve.
     :param db: Database session.
     """
-    
-    soda = db.get(Soda, name)
-    
+    statement = select(Soda).where(Soda.name == name)
+    soda = db.exec(statement).one_or_none()
+
     if not soda:
         return None
-    
+
     return soda
 
 
@@ -120,14 +122,13 @@ def make_decision(data: SodaInstructor, db: Session):
     :param data: The SodaInstructor data containing user intention, name, and quantity.
     :param db: Database session.
     """
-    ["buy", "restock", "delete", "list", "retrieve", "unknown"]
-
 
     soda = None
 
     if data.name.strip():
         soda = get_soda_by_name(data.name, db)
-
+    
+    response = None
 
     match data.intention:
         case "buy":
@@ -145,25 +146,25 @@ def make_decision(data: SodaInstructor, db: Session):
             
             soda.qty -= data.qty
             update_soda(soda.id, soda.name, soda.qty, db)
-            return Response(
-                content=f"Successfully bought {data.qty} of '{data.name}'. Remaining quantity: {soda.qty}.",
-                media_type="text/plain",
+            response = JSONResponse(
+                content={"detail": f"Successfully bought {data.qty} of '{data.name}'. Remaining quantity: {soda.qty}."},
+                media_type="json",
                 status_code=200
             )
         case "restock":
             if not soda:
                 soda = create_soda(data.name, data.qty, db)
-                return Response(
-                    content=f"Soda '{data.name}' created with quantity {data.qty}.",
-                    media_type="text/plain",
+                response = JSONResponse(
+                    content={"detail": f"Soda '{data.name}' created with quantity {data.qty}."},
+                    media_type="json",
                     status_code=201
                 )
             
             soda.qty += data.qty
             update_soda(soda.id, soda.name, soda.qty, db)
-            return Response(
-                content=f"Soda '{data.name}' restocked with quantity {data.qty}.",
-                media_type="text/plain",
+            response = JSONResponse(
+                content={"detail": f"Soda '{data.name}' restocked with quantity {data.qty}."},
+                media_type="json",
                 status_code=200
             )
         case "delete":
@@ -174,24 +175,23 @@ def make_decision(data: SodaInstructor, db: Session):
                 )
             
             delete_soda(soda.id, db)
-            return Response(
-                content=f"Soda '{data.name}' deleted successfully.",
-                media_type="text/plain",
+            response = JSONResponse(
+                content={"detail": f"Soda '{data.name}' deleted successfully."},
+                media_type="json",
                 status_code=200
             )
         case "list":
             sodas = list_sodas(db)
             if not sodas:
-                return Response(
-                    content="No sodas available.",
-                    media_type="text/plain",
+                response = JSONResponse(
+                    content={"detail": "No sodas available."},
+                    media_type="json",
                     status_code=200
                 )
             
-            soda_list = "\n".join([f"{soda.name}: {soda.qty}" for soda in sodas])
-            return Response(
-                content=f"Available sodas:\n{soda_list}",
-                media_type="text/plain",
+            response = JSONResponse(
+                content=[{"name": soda.name, "qty": soda.qty} for soda in sodas],
+                media_type="json",
                 status_code=200
             )
         
@@ -202,9 +202,9 @@ def make_decision(data: SodaInstructor, db: Session):
                     detail=f"Soda '{data.name}' not found."
                 )
             
-            return Response(
-                content=f"Soda '{soda.name}' has quantity {soda.qty}.",
-                media_type="text/plain",
+            response = JSONResponse(
+                content={"detail": f"Soda '{soda.name}' has quantity {soda.qty}."},
+                media_type="json",
                 status_code=200
             )
         case _:
@@ -213,6 +213,8 @@ def make_decision(data: SodaInstructor, db: Session):
                 detail=f"Invalid intention: {data.intention}. "
                        "Expected one of: buy, restock, delete, list, retrieve."
             )
+    
+    return response
 
 
 
