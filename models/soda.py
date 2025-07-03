@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from sqlmodel import Field, SQLModel
+import typing
 
 
 class Soda(SQLModel, table=True):
@@ -11,6 +12,6 @@ class Soda(SQLModel, table=True):
         return f"Soda({self.id}, name='{self.name}', qty={self.qty})"
 
 class SodaInstructor(BaseModel):
-    intention: str
+    intention: typing.Literal["buy", "restock", "delete", "list", "retrieve", "unknown"]
     name: str
     qty: int
