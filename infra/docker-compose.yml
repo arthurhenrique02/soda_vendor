@@ -1,0 +1,15 @@
+services:
+  fastapi_app:
+    build:
+      context: ..
+      dockerfile: infra/Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - ..:/app
+      - ./data:/app/infra/data
+    environment:
+      - DB_URL=sqlite:///./infra/data/soda_vendor.db
+      - OPENAI_API_KEY='-'
+
+    command: uvicorn core.app:app --host 0.0.0.0 --reload
