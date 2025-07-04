@@ -50,8 +50,6 @@ async def chat(prompt: str, db: Session = Depends(get_db)):
 
     response = filter_transactions(data, db)
 
-    print(response)
-
     if not isinstance(response, (HTTPException, dict, JSONResponse)):
         raise HTTPException(
             status_code=500,
