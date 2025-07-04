@@ -4,9 +4,9 @@
 
 :small_blue_diamond: [Requirements](#Requirements)
 
-:small_blue_diamond: [Installing dependencies (not Docker)](#Installing-dependencies)
+:small_blue_diamond: [Installing dependencies](#Installing-dependencies)
 
-:small_blue_diamond: [Configuring Environment (not Docker)](#Configuring-environment)
+:small_blue_diamond: [Configuring Environment](#Configuring-environment)
 
 :small_blue_diamond: [Running application](#Running-application)
 
