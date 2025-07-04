@@ -40,7 +40,7 @@ def filter_transactions(data: TransactionInstructor, db: Session):
     if data.soda_name.strip() not in ["all", ""]:
         from models.soda import Soda
 
-        query = query.join(Transaction.soda).where(Soda.name == data.soda_name.strip())
+        query = query.join(Soda).where(Soda.name == data.soda_name.strip())
 
     if data.type != TransactionType.UNKNOWN:
         query = query.where(Transaction.type == data.type)

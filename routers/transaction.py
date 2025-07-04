@@ -1,5 +1,6 @@
 import instructor
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.responses import JSONResponse
 from openai import OpenAI
 from sqlmodel import Session
 
@@ -49,7 +50,9 @@ async def chat(prompt: str, db: Session = Depends(get_db)):
 
     response = filter_transactions(data, db)
 
-    if not isinstance(response, (HTTPException, dict)):
+    print(response)
+
+    if not isinstance(response, (HTTPException, dict, JSONResponse)):
         raise HTTPException(
             status_code=500,
             detail="An unexpected error occurred while processing the request.",
