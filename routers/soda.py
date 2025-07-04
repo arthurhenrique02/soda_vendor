@@ -5,7 +5,7 @@ from sqlmodel import Session
 
 from core.utils.soda import make_decision
 from models.engine import get_db
-from models.soda import SodaInstructor
+from models.soda import SodaInstructor, SodaChatPrompt
 
 blueprint_name = "soda"
 router = APIRouter(
@@ -17,7 +17,7 @@ client = instructor.from_openai(OpenAI())
 
 
 @router.post("/chat")
-async def chat(prompt: str, db: Session = Depends(get_db)):
+async def chat(data: SodaChatPrompt, db: Session = Depends(get_db)):
     """
     Get User`s prompt, watch his intention and manipulate the database
     :return: JSON response or HTTPException
@@ -26,7 +26,7 @@ async def chat(prompt: str, db: Session = Depends(get_db)):
     prompt_msg = (
         "Considering a soda vending machine context,"
         "extract the user intention (consider retrieve a list of an specific item), "
-        f"soda name (coke, pepsi, fanta, etc) and quantity from the following prompt: {prompt}"
+        f"soda name (coke, pepsi, fanta, etc) and quantity from the following prompt: {data.prompt.strip()}"
     )
 
     data: SodaInstructor = client.chat.completions.create(

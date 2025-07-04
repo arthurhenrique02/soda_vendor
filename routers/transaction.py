@@ -6,7 +6,7 @@ from sqlmodel import Session
 
 from core.utils.transaction import filter_transactions
 from models.engine import get_db
-from models.transaction import TransactionInstructor, TransactionType
+from models.transaction import TransactionInstructor, TransactionType, TransactionChatPrompt
 
 blueprint_name = "transaction"
 router = APIRouter(
@@ -18,7 +18,7 @@ client = instructor.from_openai(OpenAI())
 
 
 @router.post("/chat")
-async def chat(prompt: str, db: Session = Depends(get_db)):
+async def chat(data: TransactionChatPrompt, db: Session = Depends(get_db)):
     """
     Get User's prompt, watch his intention and check in the database
     :return: JSON response or HTTPException
@@ -27,14 +27,14 @@ async def chat(prompt: str, db: Session = Depends(get_db)):
     prompt_msg = (
         "Considering a soda vending machine transactions context,"
         "transaction for what soda (coke, pepsi, fanta, all, etc), type of transaction"
-        " (buy, restock, delete) or date, if is a date range, save in a list: {prompt}"
+        f" (buy, restock, delete) or date, if is a date range, save in a list: {data.prompt.strip()}"
     )
 
     data: TransactionInstructor = client.chat.completions.create(
         model="gpt-4.1-nano",
         response_model=TransactionInstructor,
         messages=[
-            {"role": "user", "content": prompt_msg.format(prompt=prompt)},
+            {"role": "user", "content": prompt_msg.format(prompt=prompt_msg)},
         ],
     )
 

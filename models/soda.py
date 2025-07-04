@@ -22,3 +22,7 @@ class SodaInstructor(BaseModel):
     intention: typing.Literal["buy", "restock", "delete", "list", "retrieve", "unknown"]
     name: str
     qty: int
+
+
+class SodaChatPrompt(BaseModel):
+    prompt: str

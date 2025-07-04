@@ -36,3 +36,7 @@ class TransactionInstructor(BaseModel):
     soda_name: str
     type: TransactionType
     date: typing.List[datetime.datetime] | datetime.datetime | None = None
+
+
+class TransactionChatPrompt(BaseModel):
+    prompt: str
