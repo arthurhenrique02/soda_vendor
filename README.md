@@ -69,7 +69,7 @@ Get user`s prompt, extract his intention and act based on this intention. Respon
 
 ```json
 {
-  prompt: "string"
+  "prompt": "string"
 }
 ```
 
@@ -81,6 +81,6 @@ User just can read informations about transactions
 
 ```json
 {
-  prompt: "string"
+  "prompt": "string"
 }
 ```
