@@ -1,13 +1,15 @@
 from fastapi import FastAPI
-from core.config import configure_cors, configure_routes, configure_db
+
+from core.config import configure_cors, configure_db, configure_routes
+
 
 def create_app() -> FastAPI:
     app = FastAPI(title="Soda Vendor API", version="1.0.0")
-    
+
     configure_cors(app)
     configure_routes(app)
     configure_db()
-    
+
     return app
 
 

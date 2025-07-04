@@ -3,9 +3,9 @@ from fastapi import APIRouter, Depends, HTTPException, Response
 from openai import OpenAI
 from sqlmodel import Session
 
+from core.utils.soda import make_decision
 from models.engine import get_db
 from models.soda import SodaInstructor
-from routers.utils.soda import make_decision
 
 blueprint_name = "soda"
 router = APIRouter(
@@ -20,7 +20,7 @@ client = instructor.from_openai(OpenAI())
 async def chat(prompt: str, db: Session = Depends(get_db)):
     """
     Get User`s prompt, watch his intention and manipulate the database
-    :return: str
+    :return: JSON response or HTTPException
     """
 
     prompt_msg = (
@@ -38,31 +38,30 @@ async def chat(prompt: str, db: Session = Depends(get_db)):
     )
 
     if data.intention == "unknown":
-        return HTTPException(
+        raise HTTPException(
             status_code=400,
             detail=f"Invalid intention: {data.intention}. "
-                   "Expected one of: buy, sell, restock."
+            "Expected one of: buy, sell, restock.",
         )
 
     if not data.name.strip() and data.intention != "list":
-        return HTTPException(
-            status_code=400,
-            detail="Not found soda name in the prompt."
+        raise HTTPException(
+            status_code=400, detail="Not found soda name in the prompt."
         )
 
     if data.qty <= 0 and data.intention not in ["list", "retrieve", "delete"]:
-        return HTTPException(
+        raise HTTPException(
             status_code=400,
             detail=f"Invalid quantity: {data.qty}. "
-                   "Quantity must be an integer greater than zero."
+            "Quantity must be an integer greater than zero.",
         )
 
     reponse = make_decision(data, db)
 
     if not isinstance(reponse, (HTTPException, Response)):
-        return HTTPException(
+        raise HTTPException(
             status_code=500,
-            detail="An unexpected error occurred while processing the request."
+            detail="An unexpected error occurred while processing the request.",
         )
-    
+
     return reponse
