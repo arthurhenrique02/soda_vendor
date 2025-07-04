@@ -5,7 +5,9 @@ from sqlmodel import Session, select
 from models.transaction import Transaction, TransactionInstructor, TransactionType
 
 
-def create_transaction(soda_id: str, transaction_type: str, date: str, db: Session):
+def create_transaction(
+    soda_id: str, transaction_type: str, qty: int, date: str, db: Session
+):
     """
     Create a new transaction entry in the database.
 
@@ -15,7 +17,7 @@ def create_transaction(soda_id: str, transaction_type: str, date: str, db: Sessi
     :param db: Database session.
     """
     transaction = Transaction(
-        soda_id=soda_id, type=transaction_type, date=int(date.timestamp())
+        soda_id=soda_id, type=transaction_type, quantity=qty, date=int(date.timestamp())
     )
 
     db.add(transaction)

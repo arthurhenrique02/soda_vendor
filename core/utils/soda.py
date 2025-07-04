@@ -166,6 +166,7 @@ def make_decision(data: SodaInstructor, db: Session):
                     status_code=404, detail=f"Soda '{data.name}' not found."
                 )
 
+            data.qty = soda.qty
             delete_soda(soda.id, db)
             response = JSONResponse(
                 content={"detail": f"Soda '{data.name}' deleted successfully."},
@@ -209,6 +210,7 @@ def make_decision(data: SodaInstructor, db: Session):
         create_transaction(
             soda_id=soda.id,
             transaction_type=data.intention,
+            qty=data.qty,
             date=datetime.datetime.today(),
             db=db,
         )
