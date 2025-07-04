@@ -14,7 +14,9 @@ def create_transaction(soda_id: str, transaction_type: str, date: str, db: Sessi
     :param date: The date of the transaction.
     :param db: Database session.
     """
-    transaction = Transaction(soda_id=soda_id, type=transaction_type)
+    transaction = Transaction(
+        soda_id=soda_id, type=transaction_type, date=int(date.timestamp())
+    )
 
     db.add(transaction)
     db.commit()
@@ -35,10 +37,14 @@ def filter_transactions(data: TransactionInstructor, db: Session):
     """
     query = select(Transaction)
 
-    if soda := data.soda_name:
-        query = query.where(Transaction.soda_id == soda)
+    if data.soda_name.strip() not in ["all", ""]:
+        from models.soda import Soda
+
+        query = query.join(Transaction.soda).where(Soda.name == data.soda_name.strip())
+
     if data.type != TransactionType.UNKNOWN:
         query = query.where(Transaction.type == data.type)
+
     if date := data.date:
         if isinstance(date, list):
             # is a date range
@@ -49,7 +55,7 @@ def filter_transactions(data: TransactionInstructor, db: Session):
             )
         else:
             u_date = int(date.timestamp())
-            query = query.where(Transaction.date == u_date)
+            query = query.where(Transaction.date >= u_date)
 
     transactions = db.exec(query).all()
 

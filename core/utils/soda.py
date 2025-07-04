@@ -1,3 +1,5 @@
+import datetime
+
 from fastapi import HTTPException
 from fastapi.responses import JSONResponse
 from sqlmodel import Session, select
@@ -180,7 +182,7 @@ def make_decision(data: SodaInstructor, db: Session):
                 )
 
             response = JSONResponse(
-                content=sodas.model_dump(mode="json"),
+                content=[soda.model_dump() for soda in sodas],
                 media_type="json",
                 status_code=200,
             )
@@ -207,6 +209,7 @@ def make_decision(data: SodaInstructor, db: Session):
         create_transaction(
             soda_id=soda.id,
             transaction_type=data.intention,
+            date=datetime.datetime.today(),
             db=db,
         )
 
