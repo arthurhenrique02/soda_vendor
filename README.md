@@ -4,9 +4,9 @@
 
 :small_blue_diamond: [Requirements](#Requirements)
 
-:small_blue_diamond: [Installing dependencies](#Installing-dependencies)
+:small_blue_diamond: [Installing dependencies (not Docker)](#Installing-dependencies)
 
-:small_blue_diamond: [Configuring Environment](#Configuring-environment)
+:small_blue_diamond: [Configuring Environment (not Docker)](#Configuring-environment)
 
 :small_blue_diamond: [Running application](#Running-application)
 
@@ -22,7 +22,7 @@ Or
 ### Docker (Recommended)
 - Go to docker.com ([here](https://www.docker.com/)) and download. (You just need to go to ([running]((#Running-application)))
 
-## Installing dependencies (not Docker)
+## Installing dependencies
 
 ```sh
 cd backend
@@ -33,7 +33,7 @@ pip install python-dotenv
 ```
 
 
-## Configuring Environment (not Docker)
+## Configuring Environment
   Before running application, you need to configure environment to add some information
   - First, create a `.env` file to store `DB_url` and your `OPENAI_API_KEY`. Example
 ```env
