@@ -1,3 +1,5 @@
+import datetime
+
 from fastapi import HTTPException
 from fastapi.responses import JSONResponse
 from sqlmodel import Session, select
@@ -6,7 +8,7 @@ from models.transaction import Transaction, TransactionInstructor, TransactionTy
 
 
 def create_transaction(
-    soda_id: str, transaction_type: str, qty: int, date: str, db: Session
+    soda_id: str, transaction_type: str, qty: int, date: datetime.datetime, db: Session
 ):
     """
     Create a new transaction entry in the database.
