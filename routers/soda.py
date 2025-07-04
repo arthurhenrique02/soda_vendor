@@ -16,7 +16,7 @@ router = APIRouter(
 client = instructor.from_openai(OpenAI())
 
 
-@router.get("/chat")
+@router.post("/chat")
 async def chat(prompt: str, db: Session = Depends(get_db)):
     """
     Get User`s prompt, watch his intention and manipulate the database
